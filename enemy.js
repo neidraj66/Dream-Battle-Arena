@@ -9,12 +9,20 @@ class Enemy {
       this.die();
     }
   }
-  takeSignificantDamage() {
+  takeSignificantDamageFromUser(user) {
     this.hitPoints -= 5;
+    user.respondToEnemyTakingSignificantDamage();
   }
   receiveGlancingBlow() {
     this.hitPoints -= 3;
   }
+
+  backAway(user) {
+    user.stamina += 1;
+  }
   die() {}
   dodge() {}
+  isDefeated() {
+    return this.defeated;
+  }
 }

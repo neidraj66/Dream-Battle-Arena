@@ -1,57 +1,78 @@
-MAX_LEVEL = 20;
-
 class Dream {
   constructor() {
-    this.battleArena = new BattleArena();
+    this.die = new Die();
+    this.battleArena = new BattleArena(this);
   }
   restart() {
+    console.log("restart should not be called!");
     this.battleArena = new BattleArena();
   }
+  playRound() {
+    this.battleArena.takeTurn(
+      this.battleArena.user,
+      this.battleArena.enemies[0],
+      this.die
+    );
+  }
 }
-class BattleArena {
-  constructor() {
-    this.user = new User();
-    this.enemies = [];
 
-    const firstEnemy = new Enemy();
-    this.enemies.push(firstEnemy);
+class BattleArena {
+  constructor(dream) {
+    this.dream = dream;
+    this.user = new User();
+    this.players = [this.user];
+    this.enemies = [new Enemy()];
   }
   takeTurn(user, enemy, die) {
     user.rollDie(die);
-    if (die.face == 1) {
+    if (die.getFace() == 1) {
       user.getHit();
     }
-    if (die.face == 2) {
+    if (die.getFace() == 2) {
       user.dodge();
     }
-    if (die.face == 3) {
+    if (die.getFace() == 3) {
       user.deflect();
     }
-    if (die.face == 4) {
-      user.pushAwayEnemy(enemy);
+    if (die.getFace() == 4) {
+      enemy.backAway(user);
     }
-    if (die.face == 5) {
+    if (die.getFace() == 5) {
       enemy.dodge();
       user.glancingBlow(enemy);
     }
-    if (die.face == 6) {
-      user.giveSignificantDamage(enemy);
+    if (die.getFace() == 6) {
+      enemy.takeSignificantDamageFromUser(user);
     }
-    if (!enemy.dead) {
-      user.reactToEnemyDeath();
-    } else if (enemy.dead) {
+    if (!enemy.isDefeated()) {
+      user.reactToEnemyNotDying();
+      user.reduceRemainingTurns();
+    } else if (enemy.isDefeated()) {
+      user.reactToEnemyDying();
+      this.removeEnemyFromArena(enemy);
       this.addEnemyToArena();
     }
-    user.remainingRolls -= 1;
-    if (user.remainingRolls <= 0) {
-      user.panic = MAX_LEVEL;
-    }
-    if (player.dead) {
+    if (user.isDead()) {
       this.dream.startOver();
+    }
+
+    if (this.user.isGameOverForUser()) {
+      this.gameOver();
     }
   }
   addEnemyToArena() {
     this.enemies.push(new Enemy());
+    this.players.forEach((player) => player.panic());
+  }
+  removeEnemyFromArena(enemy) {
+    const index = this.enemies.indexOf(enemy);
+    if (index > -1) {
+      this.enemies.splice(index, 1);
+    }
+  }
+
+  gameOver() {
+    this.dream.restart();
   }
 }
 
@@ -62,6 +83,9 @@ class Die {
   }
   roll() {
     this.face = Math.floor(Math.random() * 6) + 1;
+  }
+  getFace() {
+    return this.face;
   }
 }
 
