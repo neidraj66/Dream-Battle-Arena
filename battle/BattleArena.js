@@ -24,7 +24,14 @@ class BattleArena {
     this.user = new User();
     this.players = [this.user];
     this.enemies = [new Enemy()];
+    this.enemies.forEach((enemy) => this.dream.ui.drawEnemy(enemy));
+    this.dream.ui.drawDie(this.die);
+
+    window.addEventListener("turnTaken", () => {
+      this.takeTurn(this.user, this.enemies[0], this.dream.die);
+    });
   }
+
   takeTurn(user, enemy, die) {
     user.rollDie(die);
     if (die.getFace() == 1) {
