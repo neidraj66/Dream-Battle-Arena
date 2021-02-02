@@ -1,3 +1,7 @@
+body {
+  background-image: linear-gradient(135deg, #fddb92 10%, #d1fdff 100%);
+}
+
 canvas#main-canvas {
   width: 100%;
   height: 100%;

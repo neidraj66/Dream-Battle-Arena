@@ -33,35 +33,51 @@ class BattleArena {
   }
 
   takeTurn(user, enemy, die) {
+    console.log("taking a turn...");
+    this.dream.ui.drawDieRolling();
     user.rollDie(die);
+    this.dream.ui.drawDieFace(die.face);
     if (die.getFace() == 1) {
+      this.dream.ui.drawUserGettingHit();
       user.getHit();
     }
     if (die.getFace() == 2) {
+      this.dream.ui.drawUserDodging();
       user.dodge();
     }
     if (die.getFace() == 3) {
+      this.dream.ui.drawUserDeflecting();
       user.deflect();
     }
     if (die.getFace() == 4) {
+      this.dream.ui.drawUserBackingAway();
       enemy.backAway(user);
     }
     if (die.getFace() == 5) {
+      this.dream.ui.drawEnemyDodging();
       enemy.dodge();
+      this.dream.ui.drawUserGlancingBlowOnEnemy();
       user.glancingBlow(enemy);
     }
     if (die.getFace() == 6) {
+      this.dream.ui.drawEnemyTakingSignificantDamage();
       enemy.takeSignificantDamageFromUser(user);
     }
     if (!enemy.isDefeated()) {
+      this.dream.ui.drawUserReactingToEnemyNotDying();
       user.reactToEnemyNotDying();
       user.reduceRemainingTurns();
+      this.dream.ui.drawRemainingTurns(user.remainingTurns);
     } else if (enemy.isDefeated()) {
+      this.dream.ui.drawUserReactingToEnemyDying();
       user.reactToEnemyDying();
+      this.dream.ui.drawEnemyBeingRemovedFromArena(enemy);
       this.removeEnemyFromArena(enemy);
+      this.dream.ui.drawAddingEnemyToArena();
       this.addEnemyToArena();
     }
     if (user.isDead()) {
+      this.dream.ui.drawUserDying();
       this.dream.startOver();
     }
 
@@ -71,6 +87,7 @@ class BattleArena {
   }
   addEnemyToArena() {
     this.enemies.push(new Enemy());
+    this.dream.ui.drawEnemy(this.enemies[0]);
     this.players.forEach((player) => player.panic());
   }
   removeEnemyFromArena(enemy) {
