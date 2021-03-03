@@ -1,5 +1,5 @@
 let assert = (statement, message) => {
-// I added a poopy comment
+// I added a shitty comment
   if (!statement) {
     if (message) {
       throw message;
